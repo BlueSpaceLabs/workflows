@@ -25,6 +25,9 @@ on:
       deploymentRepo:
         required: true
         type: string
+      namespace:
+        required: true
+        type: string
       env:
         required: true
         type: string
@@ -71,5 +74,5 @@ jobs:
     - name: Deploy to EKS
       run: |
         aws eks --region ${{ env.AWS_REGION }} update-kubeconfig --name ${{ env.EKS_CLUSTER }}
-        kubectl apply -f deployment.yaml
+        kubectl apply -f deployment.yaml -n ${{ inputs.namespace }}
         kubectl get svc
