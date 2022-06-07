@@ -25,6 +25,9 @@ on:
       deploymentRepo:
         required: true
         type: string
+      deploymentFile:
+        required: true
+        type: string
       namespace:
         required: true
         type: string
@@ -66,13 +69,13 @@ jobs:
 
     - name: Change Image name and tag
       run: |
-        sed -i s/imageTag/${{ inputs.imageTag }}/g deployment.yaml
-        sed -i s/serviceName/${{ inputs.serviceName }}/g deployment.yaml
-        sed -i s/servicePort/${{ inputs.servicePort }}/g deployment.yaml
-        cat deployment.yaml
+        sed -i s/imageTag/${{ inputs.imageTag }}/g ${{ inputs.deploymentFile }}
+        sed -i s/serviceName/${{ inputs.serviceName }}/g ${{ inputs.deploymentFile }}
+        sed -i s/servicePort/${{ inputs.servicePort }}/g ${{ inputs.deploymentFile }}
+        cat ${{ inputs.deploymentFile }}
 
     - name: Deploy to EKS
       run: |
         aws eks --region ${{ env.AWS_REGION }} update-kubeconfig --name ${{ env.EKS_CLUSTER }}
-        kubectl apply -f deployment.yaml -n ${{ inputs.namespace }}
+        kubectl apply -f ${{ inputs.deploymentFile }} -n ${{ inputs.namespace }}
         kubectl get svc
