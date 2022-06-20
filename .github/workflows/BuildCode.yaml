@@ -56,10 +56,29 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v3
 
+#     - name: Build with Maven
+#      run: mvn clean install -f ${{ inputs.pomPath }}
+#       run: mvn -s $GITHUB_WORKSPACE/.github/workflows/maven-settings.xml -B package --file pom.xml
+    
+    - name: Setup Maven settings.xml
+      uses: whelk-io/maven-settings-xml-action@v11
+      with:
+        servers: |
+            [
+              {
+                "id": "github",
+                "username": "${env.GIT_UNAME}",
+                "password": "${env.GIT_PAT}"
+              }
+            ]
     - name: Build with Maven
-     # run: mvn clean install -f ${{ inputs.pomPath }}
-      run: mvn -s $GITHUB_WORKSPACE/.github/workflows/maven-settings.xml -B package --file pom.xml
-
+      run: mvn -B package --file pom.xml -Dmaven.test.skip=false -Dspring.profiles.active=default -Ddb-user=blue -Ddb-password=Password@1234 -DREDIS_SECRET=${{secrets.REDIS_SECRET}}
+      env:
+        GIT_UNAME: ${{secrets.GIT_UNAME}}
+        GIT_PAT: ${{secrets.GIT_PAT}}
+        db-user: blue
+        db-password: Password@1234
+        
     - name: Log in to the Container registry
       if:  ${{ inputs.event_name != 'pull_request' }}
       uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
