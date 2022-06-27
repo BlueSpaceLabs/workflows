@@ -72,7 +72,7 @@ jobs:
               }
             ]
     - name: Build with Maven
-      run: mvn -B package --file pom.xml -Dmaven.test.skip=false -Dspring.profiles.active=default -Ddb-user=blue -Ddb-password=Password@1234 -DREDIS_SECRET=${{secrets.REDIS_SECRET}}
+      run: mvn -B package --file pom.xml -Dmaven.test.skip=true -Dspring.profiles.active=default -Ddb-user=blue -Ddb-password=Password@1234 -DREDIS_SECRET=${{secrets.REDIS_SECRET}}
       env:
         GIT_UNAME: sales84
         GIT_PAT: ${{secrets.PATTOKEN}}
